@@ -1,71 +1,372 @@
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-  <meta http-equiv="CONTENT-TYPE" content="text/html; charset=UTF-8">
-  <title>Hello, World!</title>
-   
-    <style>
-  body{
-    font-size:50px;
-  }
-        #linkButton {
-            background-color: #ff6347; /* Tomato Red */
-            border: none;
-            color: white;
-            padding: 45px 60px;
-            font-size: 30px;
-            cursor: pointer;
-            border-radius: 18px;
-            transition: background-color 0.3s, transform 0.1s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Birthday Surprise Gift Box</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
-        #linkButton:hover {
-            background-color: #cc4c39;
-        }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        #linkButton:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-    </style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Floating particles background */
+    .particle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 50%;
+      animation: float 6s infinite ease-in-out;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    .container {
+      text-align: center;
+      z-index: 10;
+    }
+
+    h1 {
+      color: #fff;
+      font-size: 3rem;
+      font-weight: 700;
+      text-shadow: 3px 3px 15px rgba(0,0,0,0.4);
+      margin-bottom: 30px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 3px 3px 15px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.3); }
+      to { text-shadow: 3px 3px 15px rgba(0,0,0,0.4), 0 0 40px rgba(255,255,255,0.6); }
+    }
+
+    .gift-box-container {
+      perspective: 1000px;
+      margin-top: 20px;
+    }
+
+    .gift-box {
+      width: 250px;
+      height: 250px;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      transform-style: preserve-3d;
+    }
+
+    .gift-box:hover {
+      transform: scale(1.1) rotateY(10deg);
+    }
+
+    .gift-box.shake {
+      animation: shake 0.5s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0) rotate(0deg); }
+      25% { transform: translateX(-10px) rotate(-5deg); }
+      75% { transform: translateX(10px) rotate(5deg); }
+    }
+
+    .box-bottom {
+      width: 250px;
+      height: 200px;
+      background: linear-gradient(145deg, #ff6b6b, #ee5a6f);
+      border-radius: 15px;
+      position: absolute;
+      bottom: 0;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .box-lid {
+      width: 260px;
+      height: 60px;
+      background: linear-gradient(145deg, #ff8787, #ff6b6b);
+      border-radius: 15px;
+      position: absolute;
+      top: -10px;
+      left: -5px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: transform 0.6s ease, top 0.6s ease;
+      z-index: 2;
+    }
+
+    .box-lid::before {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 60px;
+      background: linear-gradient(145deg, #ffd93d, #ffb830);
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 5px;
+    }
+
+    .box-lid::after {
+      content: '';
+      position: absolute;
+      width: 260px;
+      height: 30px;
+      background: linear-gradient(145deg, #ffd93d, #ffb830);
+      top: 15px;
+      left: 0;
+      border-radius: 5px;
+    }
+
+    .ribbon-vertical {
+      position: absolute;
+      width: 30px;
+      height: 200px;
+      background: linear-gradient(145deg, #ffd93d, #ffb830);
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      z-index: 1;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .gift-box.opening .box-lid {
+      transform: rotateX(-100deg);
+      top: -120px;
+    }
+
+    .click-counter {
+      margin-top: 30px;
+      color: #fff;
+      font-size: 1.5rem;
+      font-weight: 600;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+    }
+
+    .reveal-button {
+      display: none;
+      margin-top: 30px;
+      padding: 15px 40px;
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #667eea;
+      background: linear-gradient(145deg, #fff, #f0f0f0);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      transition: all 0.3s ease;
+      animation: pulse 1.5s infinite;
+    }
+
+    .reveal-button:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .celebration-container {
+      display: none;
+      text-align: center;
+      animation: celebrationEntry 1s ease;
+    }
+
+    @keyframes celebrationEntry {
+      from { opacity: 0; transform: scale(0.5); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .celebration-message {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 30px;
+      padding: 50px 70px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .celebration-message h2 {
+      color: #ffd93d;
+      font-size: 3.5rem;
+      font-weight: 700;
+      text-shadow: 3px 3px 15px rgba(0,0,0,0.5);
+      margin-bottom: 20px;
+      animation: bounce 1s ease infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .celebration-message p {
+      color: #fff;
+      font-size: 2rem;
+      font-weight: 400;
+      text-shadow: 2px 2px 10px rgba(0,0,0,0.4);
+    }
+
+    .name-highlight {
+      color: #ffd93d;
+      font-weight: 700;
+      font-size: 2.5rem;
+      text-shadow: 3px 3px 15px rgba(255, 217, 61, 0.5);
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background: #ffd93d;
+      animation: confettiFall 3s linear infinite;
+    }
+
+    @keyframes confettiFall {
+      to {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      color: rgba(255,255,255,0.8);
+      font-size: 0.9rem;
+      z-index: 5;
+    }
+  </style>
 </head>
-  <center>
-<body bgcolor=grey>
-  <font color=white>
-    <h1> Complaint To Justice</h1>
-    <a href="https://ibb.co/PZDWWBPY"><img src="https://i.ibb.co/FbHYYGyW/IMG-20250924-WA0222.jpg" alt="IMG-20250924-WA0222" border="0" width="65%" height="50%"></a>
-    <br> 
-    <br>
-    <br>
-     <button id="linkButton">APLICATION FORM</button>
-    <br>
-    <br>
-    <font color=white>
-OFFENSE: Hate speech and messages inciting religious violence against the Muslim community and the Holy Qur'an.
-    </font>
-  </font>
-   <script>
-        // 1. Get a reference to the button
-        const button = document.getElementById('linkButton');
-        
-        // 2. Define the URL you want to open
-        const targetURL = 'https://mumbaipolice.gov.in/OnlineComplaints?ps_id=0';
-        
-        // 3. Define the function that runs on click
-        function openLink() {
-            // This is the core action: changing the current window's location
-            // The value 'targetURL' will be loaded in the browser.
-            window.location.href = targetURL;
-            
-            // To open the link in a NEW TAB, you would use:
-            // window.open(targetURL, '_blank');
-        }
+<body>
 
-        // 4. Attach the function to the button's 'click' event
-        button.addEventListener('click', openLink);
-    </script>
-</center>
+  <!-- Background particles -->
+  <script>
+    for(let i = 0; i < 20; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      particle.style.left = Math.random() * 100 + '%';
+      particle.style.top = Math.random() * 100 + '%';
+      particle.style.animationDelay = Math.random() * 6 + 's';
+      particle.style.animationDuration = (Math.random() * 3 + 4) + 's';
+      document.body.appendChild(particle);
+    }
+  </script>
+
+  <div class="container">
+    <div id="giftSection">
+      <h1>🎁 Click the Gift Box! 🎁</h1>
+      
+      <div class="gift-box-container">
+        <div class="gift-box" id="giftBox">
+          <div class="box-lid"></div>
+          <div class="ribbon-vertical"></div>
+          <div class="box-bottom"></div>
+        </div>
+      </div>
+
+      <div class="click-counter" id="clickCounter">
+        Clicks: <span id="clickCount">0</span> / <span id="requiredClicks">7</span>
+      </div>
+
+      <button class="reveal-button" id="revealButton">
+        🎉 Reveal the Birthday Surprise! 🎉
+      </button>
+    </div>
+
+    <div class="celebration-container" id="celebrationSection">
+      <div class="celebration-message">
+        <h2>🎊 HAPPY BIRTHDAY! 🎊</h2>
+        <p>To our amazing <span class="name-highlight" id="birthdayName">Friend</span>!</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>Made with ❤️ for Special Celebrations</footer>
+
+  <script>
+    // Birthday names list
+    const names = ["Adhith"];
+    let currentNameIndex = 0;
+
+    // Random required clicks between 5-10
+    const requiredClicks = Math.floor(Math.random() * 6) + 5;
+    document.getElementById('requiredClicks').textContent = requiredClicks;
+
+    let clickCount = 0;
+    const giftBox = document.getElementById('giftBox');
+    const clickCounter = document.getElementById('clickCount');
+    const revealButton = document.getElementById('revealButton');
+    const giftSection = document.getElementById('giftSection');
+    const celebrationSection = document.getElementById('celebrationSection');
+
+    // Gift box click handler
+    giftBox.addEventListener('click', () => {
+      if (clickCount < requiredClicks) {
+        clickCount++;
+        clickCounter.textContent = clickCount;
+        
+        // Add shake animation
+        giftBox.classList.add('shake');
+        setTimeout(() => giftBox.classList.remove('shake'), 500);
+
+        // Check if reached required clicks
+        if (clickCount === requiredClicks) {
+          giftBox.classList.add('opening');
+          setTimeout(() => {
+            revealButton.style.display = 'inline-block';
+          }, 600);
+        }
+      }
+    });
+
+    // Reveal button click handler
+    revealButton.addEventListener('click', () => {
+      // Create confetti
+      for(let i = 0; i < 100; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.background = ['#ffd93d', '#ff6b6b', '#4ecdc4', '#a8e6cf', '#ffa07a'][Math.floor(Math.random() * 5)];
+        confetti.style.animationDelay = Math.random() * 0.5 + 's';
+        confetti.style.width = confetti.style.height = (Math.random() * 10 + 5) + 'px';
+        document.body.appendChild(confetti);
+        
+        setTimeout(() => confetti.remove(), 3000);
+      }
+
+      // Show celebration
+      giftSection.style.display = 'none';
+      celebrationSection.style.display = 'block';
+      
+      // Display current name
+      document.getElementById('birthdayName').textContent = names[currentNameIndex];
+      
+      // Cycle through names every 3 seconds
+      setInterval(() => {
+        currentNameIndex = (currentNameIndex + 1) % names.length;
+        document.getElementById('birthdayName').textContent = names[currentNameIndex];
+      }, 3000);
+    });
+  </script>
+
 </body>
 </html>
